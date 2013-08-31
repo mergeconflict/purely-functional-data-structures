@@ -18,6 +18,7 @@
 
     <!-- For syntax highlighting -->
     <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+    <audio id="bzzzt"><source src="bzzzt.mp3" type="audio/mpeg"></audio>
 
     <!-- If the query includes 'print-pdf', use the PDF print sheet -->
     <script>
@@ -212,46 +213,41 @@ public synchronized Set&lt;Rectangle&gt; getRectangles() {
 </section>
 
 <section>
-  <h2>Feels good*, man</h2>
-  <pre>
-    <code class="java" data-trim>
+  <section>
+    <h2>Feels good*, man</h2>
+    <pre>
+      <code class="java" data-trim>
 public class Rectangle implements Comparable&lt;Rectangle&gt; {
-  public final int width, height;
+  private final int width, height;
   public Rectangle(int width, int height);
+
+  // getters
+  public int getWidth();
+  public int getHeight();
 
   // identity
   public int hashCode();
   public boolean equals(Object o);
   public int compareTo(Rectangle r);
+      </code>
+    </pre>
+    <h4>⥥</h4>
+  </section>
+  <section>
+    <h4>⥣</h4>
+    <pre>
+      <code class="java" data-trim>
+// setters
+public Rectangle setWidth(int width) {
+  return new Rectangle(width, this.height);
 }
-    </code>
-  </pre>
-  <p class="fragment">* approximate</p>
-</section>
 
-<section>
-  <pre>
-    <code class="java" data-trim>
-public class Rectangle implements Comparable&lt;Rectangle&gt; {
-  public final int width, height;
-  public Rectangle(int width, int height);
-
-  // convenience "update" methods
-  public Rectangle updateWidth(int width) {
-    return new Rectangle(width, this.height);
-  }
-
-  public Rectangle updateHeight(int height) {
-    return new Rectangle(this.width, height);
-  }
-
-  // identity
-  public int hashCode();
-  public boolean equals(Object o);
-  public int compareTo(Rectangle r);
+public Rectangle setHeight(int height) {
+  return new Rectangle(this.width, height);
 }
-    </code>
-  </pre>
+      </code>
+    </pre>
+  </section>
 </section>
 
 <section>
@@ -263,41 +259,86 @@ public class Rectangle implements Comparable&lt;Rectangle&gt; {
   </ul>
 </section>
 
+<section>
+  <h2>Stack interface</h2>
+  <pre>
+    <code class="java" data-trim>
+public class Stack&lt;E&gt; {
+  public Stack&lt;E&gt; push(E element);     // return a copy
+  public Stack&lt;E&gt; pop();               // return a copy
+  public E top();
+  public boolean isEmpty();
+
+  public static &lt;E&gt; Stack&lt;E&gt; empty();  // factory
+}
+    </code>
+  </pre>
+</section>
+
+<section><h1>TODO: pretty pictures</h1></section>
+
+<section>
+  <section>
+    <h2>Stack implementation</h2>
+    <pre>
+      <code class="java" data-trim>
+public class Stack&lt;E&gt; {
+  private final E head;
+  private final Stack&lt;E&gt; tail;
+
+  private Stack(E head, Stack&lt;E&gt; tail) {
+    this.head = head;
+    this.tail = tail;
+  }
+      </code>
+    </pre>
+    <h4>⥥</h4>
+  </section>
+  <section>
+    <h4>⥣</h4>
+    <pre>
+      <code class="java" data-trim>
+public Stack&lt;E&gt; push(E element) {
+  return new Stack&lt;E&gt;(element, this);
+}
+
+public Stack&lt;E&gt; pop() {
+  return tail;
+}
+
+public E top() {
+  return head;
+}
+
+public boolean isEmpty() {
+  return tail == null;
+}
+      </code>
+    </pre>
+    <h4>⥥</h4>
+  </section>
+  <section>
+    <h4>⥣</h4>
+    <pre>
+      <code class="java" data-trim>
+private static final Stack&lt;Object&gt; EMPTY =
+  new Stack&lt;Object&gt;(null, null);
+
+@SuppressWarnings("unchecked")
+public static &lt;E&gt; Stack&lt;E&gt; empty() {
+  return (Stack&lt;E&gt;) EMPTY;
+}
+      </code>
+    </pre>
+  </section>
+</section>
+
       </div>
-
     </div>
-
-    <audio id="bzzzt"><source src="bzzzt.mp3" type="audio/mpeg"></audio>
 
     <script src="reveal.js/lib/js/head.min.js"></script>
     <script src="reveal.js/js/reveal.min.js"></script>
-
-    <script>
-
-      // Full list of configuration options available here:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        width: 1600,
-        height: 900,
-        controls: false,
-        progress: true,
-        history: true,
-        center: true,
-        rollingLinks: false,
-        transition: 'concave',
-
-        // Optional libraries used to extend on reveal.js
-        dependencies: [
-          { src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-        ]
-      });
-
-      Reveal.addEventListener( 'slidechanged', function( event ) {
-        if ( ~Reveal.getCurrentSlide().className.indexOf('bzzzt') ) {
-          document.getElementById( 'bzzzt' ).play();
-        }
-      } );
-    </script>
+    <script src="index.js"></script>
 
   </body>
 </html>
