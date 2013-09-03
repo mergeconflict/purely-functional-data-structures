@@ -364,9 +364,9 @@ public class Queue&lt;E&gt; {
 </section>
 
 <section>
-    <h2>Prerequisite</h2>
-    <pre>
-      <code class="java" data-trim>
+  <h2>Prerequisite</h2>
+  <pre>
+    <code class="java" data-trim>
 public Stack&lt;E&gt; reverse() {
   Stack&lt;E&gt; in = this, out = empty();
   while (in.size != 0) {
@@ -444,8 +444,55 @@ public static &lt;E&gt; Queue&lt;E&gt; empty() {
 </section>
 
 <section>
+  <h1>Microbenchmarking!</h1>
+</section>
+
+<section>
+  <section>
+    <h2>Testbed</h2>
+    <pre>
+      <code class="java" data-trim>
+public class CASQueue&lt;E&gt; {
+  private final AtomicReference&lt;Queue&lt;E&gt;&gt; q;
+  private final Semaphore nonEmpty = new Semaphore(0);
+
+  public CASQueue(Queue&lt;E&gt; q) {
+    this.q = new AtomicReference&lt;Queue&lt;E&gt;&gt;(q);
+  }
+
+  // compare-and-set loop
+  public void enqueue(E element);
+  public E dequeue();
+}
+      </code>
+    </pre>
+    <h4>⥥</h4>
+  </section>
+  <section>
+    <h4>⥣</h4>
+    <pre>
+      <code class="java" data-trim>
+public class LockQueue&lt;E&gt; {
+  private Queue&lt;E&gt; q;
+  private final Lock lock = new ReentrantLock();
+  private final Condition nonEmpty = lock.newCondition();
+
+  public LockQueue(Queue&lt;E&gt; q) {
+    this.q = q;
+  }
+
+  // lock/unlock, await/signal
+  public void enqueue(E element);
+  public E dequeue();
+}
+      </code>
+    </pre>
+  </section>
+</section>
+
+<section>
   <h2>Measurements</h2>
-  <img src="banker-queue-measurements.png">
+  <img src="naive-measurements.png">
 </section>
 
 <section class="bzzzt" data-transition="zoom">
@@ -557,7 +604,7 @@ public static &lt;E&gt; Queue&lt;E&gt; empty() {
 
 <section>
   <h2>Measurements</h2>
-  <img src="finger-tree-measurements.png">
+  <img src="recursive-measurements.png">
 </section>
 
 <section data-transition="zoom">
