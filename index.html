@@ -286,6 +286,11 @@ public class Stack&lt;E&gt; {
   private final E head;
   private final Stack&lt;E&gt; tail;
 
+  private Stack() {
+    head = null;
+    tail = null;
+  }
+
   private Stack(E head, Stack&lt;E&gt; tail) {
     this.head = head;
     this.tail = tail;
@@ -321,8 +326,7 @@ public boolean isEmpty() {
     <h4>⥣</h4>
     <pre>
       <code class="java" data-trim>
-private static final Stack&lt;Object&gt; EMPTY =
-  new Stack&lt;Object&gt;(null, null);
+private static final Stack&lt;Object&gt; EMPTY = new Stack&lt;Object&gt;();
 
 @SuppressWarnings("unchecked")
 public static &lt;E&gt; Stack&lt;E&gt; empty() {
@@ -331,6 +335,246 @@ public static &lt;E&gt; Stack&lt;E&gt; empty() {
       </code>
     </pre>
   </section>
+</section>
+
+<section>
+  <h2>Okay...</h2>
+</section>
+
+<section>
+  <h2>Queue interface</h2>
+  <pre>
+    <code class="java" data-trim>
+public class Queue&lt;E&gt; {
+  public Queue&lt;E&gt; enqueue(E element); // return a copy
+  public Queue&lt;E&gt; dequeue();          // return a copy
+  public E front();
+  public boolean isEmpty();
+
+  public static &lt;E&gt; Queue&lt;E&gt; empty(); // factory
+}
+    </code>
+  </pre>
+</section>
+
+<section>
+  <h1>TODO: pretty pictures</h1>
+  <p>discuss invariant: out is empty only if queue is empty</p>
+  <p>discuss amortized analysis</p>
+</section>
+
+<section>
+    <h2>Prerequisite</h2>
+    <pre>
+      <code class="java" data-trim>
+public Stack&lt;E&gt; reverse() {
+  Stack&lt;E&gt; in = this, out = empty();
+  while (in.size != 0) {
+    out = out.push(in.head);
+    in = in.tail;
+  }
+  return out;
+}
+    </code>
+  </pre>
+</section>
+
+<section>
+  <section>
+    <h2>Queue implementation</h2>
+    <pre style="font-size: 80%">
+      <code class="java" data-trim>
+public class Queue&lt;E&gt; {
+  private final Stack&lt;E&gt; in, out;
+
+  private Queue() {
+    in = Stack.empty();
+    out = Stack.empty();
+  }
+
+  private Queue(Stack&lt;E&gt; in, Stack&lt;E&gt; out) {
+    if (out.isEmpty()) {
+      this.in = Stack.empty();
+      this.out = in.reverse();
+    } else {
+      this.in = in;
+      this.out = out;
+    }
+  }
+      </code>
+    </pre>
+    <h4>⥥</h4>
+  </section>
+  <section>
+    <h4>⥣</h4>
+    <pre>
+      <code class="java" data-trim>
+public Queue&lt;E&gt; enqueue(E element) {
+  return new Queue&lt;E&gt;(in.push(element), out);
+}
+
+public Queue&lt;E&gt; dequeue() {
+  return new Queue&lt;E&gt;(in, out.pop());
+}
+
+public E front() {
+  return out.top();
+}
+
+public boolean isEmpty() {
+  return out.isEmpty();
+}
+      </code>
+    </pre>
+    <h4>⥥</h4>
+  </section>
+  <section>
+    <h4>⥣</h4>
+    <pre>
+      <code class="java" data-trim>
+private static final Queue&lt;Object&gt; EMPTY = new Queue&lt;Object&gt;();
+
+@SuppressWarnings("unchecked")
+public static &lt;E&gt; Queue&lt;E&gt; empty() {
+  return (Queue&lt;E&gt;) EMPTY;
+}
+      </code>
+    </pre>
+  </section>
+</section>
+
+<section>
+  <h2>Measurements</h2>
+  <img src="banker-queue-measurements.png">
+</section>
+
+<section class="bzzzt" data-transition="zoom">
+  <h2 style="color: red; font-size: 900px;">🅇</h2>
+</section>
+
+<section>
+  <h2>Back to the drawing board...</h2>
+</section>
+
+<section>
+  <h1>TODO: pretty pictures</h1>
+  <p>discuss "spine" and recursive slowdown</p>
+  <p>discuss new invariant: stacks can't be longer than some fixed length</p>
+</section>
+
+<section>
+  <section>
+    <h2>Queue reimplementation</h2>
+    <pre>
+      <code class="java" data-trim>
+public class Queue&lt;E&gt; {
+  private final Stack&lt;E&gt; in;
+  private final Queue&lt;Stack&lt;E&gt;&gt; spine;
+  private final Stack&lt;E&gt; out;
+
+  @SuppressWarnings("unchecked")
+  private Queue() {
+    in = Stack.empty();
+    spine = (Queue&lt;Stack&lt;E&gt;&gt;) this;
+    out = Stack.empty();
+  }
+      </code>
+    </pre>
+    <h4>⥥</h4>
+  </section>
+  <section>
+    <h4>⥣</h4>
+    <pre style="font-size: 60%">
+      <code class="java" data-trim>
+private Queue(Stack&lt;E&gt; in, Queue&lt;Stack&lt;E&gt;&gt; spine, Stack&lt;E&gt; out) {
+  if (out.isEmpty()) {
+    if (spine.isEmpty()) {
+      // case 1: same as naïve queue
+      this.in = Stack.empty();
+      this.spine = empty();
+      this.out = in.reverse();
+    } else {
+      // case 2: dequeue spine
+      this.in = in;
+      this.spine = spine.dequeue();
+      this.out = spine.front();
+    }
+  } else {
+    if (in.size() == 8) {
+      // case 3: enqueue spine
+      this.in = Stack.empty();
+      this.spine = spine.enqueue(in.reverse());
+      this.out = out;
+    } else {
+      // case 4: same as naïve queue
+      this.in = in;
+      this.spine = spine;
+      this.out = out;
+    }
+  }
+}
+      </code>
+    </pre>
+    <h4>⥥</h4>
+  </section>
+  <section>
+    <h4>⥣</h4>
+    <pre>
+      <code class="java" data-trim>
+public Queue&lt;E&gt; enqueue(E element) {
+  return new Queue&lt;E&gt;(in.push(element), spine, out);
+}
+
+public Queue&lt;E&gt; dequeue() {
+  return new Queue&lt;E&gt;(in, spine, out.pop());
+}
+
+public E front() {
+  return out.top();
+}
+
+public boolean isEmpty() {
+  return out.size() == 0;
+}
+      </code>
+    </pre>
+    <h4>⥥</h4>
+  </section>
+  <section>
+    <h4>⥣</h4>
+    <pre>
+      <code class="java" data-trim>
+private static final Queue&lt;Object&gt; EMPTY = new Queue&lt;Object&gt;();
+
+@SuppressWarnings("unchecked")
+public static &lt;E&gt; Queue&lt;E&gt; empty() {
+  return (Queue&lt;E&gt;) EMPTY;
+}
+      </code>
+    </pre>
+  </section>
+</section>
+
+<section>
+  <h2>Measurements</h2>
+  <img src="finger-tree-measurements.png">
+</section>
+
+<section data-transition="zoom">
+  <img src="success.jpg">
+  <h2>Success.</h2>
+</section>
+
+<section>
+  <h2>Point being</h2>
+  <p>not suggesting using persistent queues for real-time messaging (use disruptor!)</p>
+  <p>instead, suggesting that performance is good while offering persistence (sharing of substructure)</p>
+  <p>mention vector tries, hash array mapped tries</p>
+  <p>would be nice if java had these built in</p>
+</section>
+
+<section>
+  <h1><b>Thank you</b></h1>
 </section>
 
       </div>
