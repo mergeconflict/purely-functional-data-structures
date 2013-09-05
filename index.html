@@ -51,8 +51,7 @@
 <section>
   <h2>Boring example</h2>
   <h3 style="font-weight: 300;">(obvious things omitted)</h3>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 public class Rectangle implements Comparable&lt;Rectangle&gt; {
   private int width, height;
   public Rectangle(int width, int height);
@@ -68,14 +67,12 @@ public class Rectangle implements Comparable&lt;Rectangle&gt; {
   public boolean equals(Object o);
   public int compareTo(Rectangle r);
 }
-    </code>
-  </pre>
+    </code></pre>
 </section>
 
 <section>
   <h2>Identity crisis</h2>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 // add a rectangle to a hash set
 Set&lt;Rectangle&gt; s = new HashSet&lt;Rectangle&gt;();
 Rectangle r = new Rectangle(2, 3);
@@ -88,8 +85,7 @@ s.contains(r); // false
 
 // even more fun ...
 s.add(r);      // s = [Rectangle(5, 3), Rectangle(5, 3)]
-    </code>
-  </pre>
+  </code></pre>
   <p class="fragment">(a similar problem occurs with tree sets)</p>
 </section>
 
@@ -99,42 +95,37 @@ s.add(r);      // s = [Rectangle(5, 3), Rectangle(5, 3)]
 
 <section>
   <h2>Trolling Prof. Liskov</h2>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 public class Square extends Rectangle {
   public Square(int length) {
     super(length, length);
   }
 }
-    </code>
-  </pre>
+  </code></pre>
 </section>
 
 <section>
   <h2>Problem solved?</h2>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 public class Square extends Rectangle {
   public Square(int length) {
     super(length, length);
   }
 
-  public setLength(int length) {
+  public void setLength(int length) {
     super.setWidth();
     super.setHeight();
   }
 
-  @Override public setWidth(int width)   { setLength(width);  }
-  @Override public setHeight(int height) { setLength(height); }
+  @Override public void setWidth(int width)   { setLength(width);  }
+  @Override public void setHeight(int height) { setLength(height); }
 }
-    </code>
-  </pre>
+  </code></pre>
 </section>
 
 <section>
   <h2>Hidden invariants!</h2>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 @DataPoints
 public static void Rectangle[] rectangles(); // may contain squares!
 
@@ -147,8 +138,7 @@ public void setWidthMustNotSetHeight(Rectangle r) {
   r.setWidth(0);
   assertEquals(r.getHeight(), expectedHeight);
 }
-    </code>
-  </pre>
+  </code></pre>
 </section>
 
 <section class="bzzzt" data-transition="zoom">
@@ -157,33 +147,28 @@ public void setWidthMustNotSetHeight(Rectangle r) {
 
 <section>
   <h2>More fun</h2>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 public class RectangleManager {
   private final Set&lt;Rectangle&gt; rectangles = new HashSet&lt;Rectangle&gt;();
   public Set&lt;Rectangle&gt; getRectangles() {
     return rectangles;
   }
 }
-    </code>
-  </pre>
+  </code></pre>
 </section>
 
 <section>
   <h2>Somewhat less mutable</h2>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 public Set&lt;Rectangle&gt; getRectangles() {
   return Collections.unmodifiableSet(rectangles); // ugh
 }
-    </code>
-  </pre>
+  </code></pre>
 </section>
 
 <section>
   <h2>YOLO</h2>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 public synchronized Set&lt;Rectangle&gt; getRectangles() {
   Set&lt;Rectangle&gt; copy = new HashSet&lt;Rectangle&gt;();
   for (Rectangle r : rectangles) {
@@ -191,8 +176,7 @@ public synchronized Set&lt;Rectangle&gt; getRectangles() {
   }
   return copy;
 }
-    </code>
-  </pre>
+  </code></pre>
 </section>
 
 <section class="bzzzt" data-transition="zoom">
@@ -215,8 +199,7 @@ public synchronized Set&lt;Rectangle&gt; getRectangles() {
 <section>
   <section>
     <h2>Feels good*, man</h2>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 public class Rectangle implements Comparable&lt;Rectangle&gt; {
   private final int width, height;
   public Rectangle(int width, int height);
@@ -229,14 +212,12 @@ public class Rectangle implements Comparable&lt;Rectangle&gt; {
   public int hashCode();
   public boolean equals(Object o);
   public int compareTo(Rectangle r);
-      </code>
-    </pre>
+    </code></pre>
     <h4>⥥</h4>
   </section>
   <section>
     <h4>⥣</h4>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 // setters
 public Rectangle setWidth(int width) {
   return new Rectangle(width, this.height);
@@ -245,8 +226,7 @@ public Rectangle setWidth(int width) {
 public Rectangle setHeight(int height) {
   return new Rectangle(this.width, height);
 }
-      </code>
-    </pre>
+    </code></pre>
   </section>
 </section>
 
@@ -261,8 +241,7 @@ public Rectangle setHeight(int height) {
 
 <section>
   <h2>Stack interface</h2>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 public class Stack&lt;E&gt; {
   public Stack&lt;E&gt; push(E element);     // return a copy
   public Stack&lt;E&gt; pop();               // return a copy
@@ -271,17 +250,52 @@ public class Stack&lt;E&gt; {
 
   public static &lt;E&gt; Stack&lt;E&gt; empty();  // factory
 }
-    </code>
-  </pre>
+  </code></pre>
 </section>
 
-<section><h1>TODO: pretty pictures</h1></section>
+<section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Stack&lt;Integer&gt; empty = Stack.empty();
+    </code></pre>
+    <p><img class="diagram" src="stack/empty.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Stack&lt;Integer&gt; a = empty.push(1);
+    </code></pre>
+    <p><img class="diagram" src="stack/a.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Stack&lt;Integer&gt; b = a.push(2).push(3);
+    </code></pre>
+    <p><img class="diagram" src="stack/ab.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Stack&lt;Integer&gt; c = b.pop().push(4);
+    </code></pre>
+    <p><img class="diagram" src="stack/abc.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Stack&lt;Integer&gt; d = a.push(5);
+    </code></pre>
+    <p><img class="diagram" src="stack/abcd.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+b = b.pop(); // 3 can be GC'ed
+d = d.pop(); // 5 can be GC'ed
+    </code></pre>
+    <p><img class="diagram" src="stack/pop.png"></p>
+  </section></section>
 
 <section>
   <section>
     <h2>Stack implementation</h2>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 public class Stack&lt;E&gt; {
   private final E head;
   private final Stack&lt;E&gt; tail;
@@ -295,14 +309,12 @@ public class Stack&lt;E&gt; {
     this.head = head;
     this.tail = tail;
   }
-      </code>
-    </pre>
+    </code></pre>
     <h4>⥥</h4>
   </section>
   <section>
     <h4>⥣</h4>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 public Stack&lt;E&gt; push(E element) {
   return new Stack&lt;E&gt;(element, this);
 }
@@ -318,22 +330,19 @@ public E top() {
 public boolean isEmpty() {
   return tail == null;
 }
-      </code>
-    </pre>
+    </code></pre>
     <h4>⥥</h4>
   </section>
   <section>
     <h4>⥣</h4>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 private static final Stack&lt;Object&gt; EMPTY = new Stack&lt;Object&gt;();
 
 @SuppressWarnings("unchecked")
 public static &lt;E&gt; Stack&lt;E&gt; empty() {
   return (Stack&lt;E&gt;) EMPTY;
 }
-      </code>
-    </pre>
+    </code></pre>
   </section>
 </section>
 
@@ -343,8 +352,7 @@ public static &lt;E&gt; Stack&lt;E&gt; empty() {
 
 <section>
   <h2>Queue interface</h2>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 public class Queue&lt;E&gt; {
   public Queue&lt;E&gt; enqueue(E element); // return a copy
   public Queue&lt;E&gt; dequeue();          // return a copy
@@ -353,8 +361,7 @@ public class Queue&lt;E&gt; {
 
   public static &lt;E&gt; Queue&lt;E&gt; empty(); // factory
 }
-    </code>
-  </pre>
+  </code></pre>
 </section>
 
 <section>
@@ -364,9 +371,41 @@ public class Queue&lt;E&gt; {
 </section>
 
 <section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; empty = Queue.empty();
+    </code></pre>
+    <p><img class="diagram" src="naive-queue/empty.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; a = empty.enqueue(1);
+    </code></pre>
+    <p><img class="diagram" src="naive-queue/a.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; b = a.enqueue(2).enqueue(3).enqueue(4);
+    </code></pre>
+    <p><img class="diagram" src="naive-queue/ab.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; c = b.dequeue();
+    </code></pre>
+    <p><img class="diagram" src="naive-queue/bc.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; d = c.dequeue().enqueue(5);
+    </code></pre>
+    <p><img class="diagram" src="naive-queue/cd.png"></p>
+  </section>
+</section>
+
+<section>
   <h2>Prerequisite</h2>
-  <pre>
-    <code class="java" data-trim>
+  <pre><code class="java" data-trim>
 public Stack&lt;E&gt; reverse() {
   Stack&lt;E&gt; in = this, out = empty();
   while (in.size != 0) {
@@ -375,8 +414,7 @@ public Stack&lt;E&gt; reverse() {
   }
   return out;
 }
-    </code>
-  </pre>
+  </code></pre>
 </section>
 
 <section>
@@ -401,14 +439,12 @@ public class Queue&lt;E&gt; {
       this.out = out;
     }
   }
-      </code>
-    </pre>
+    </code></pre>
     <h4>⥥</h4>
   </section>
   <section>
     <h4>⥣</h4>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 public Queue&lt;E&gt; enqueue(E element) {
   return new Queue&lt;E&gt;(in.push(element), out);
 }
@@ -424,22 +460,19 @@ public E front() {
 public boolean isEmpty() {
   return out.isEmpty();
 }
-      </code>
-    </pre>
+    </code></pre>
     <h4>⥥</h4>
   </section>
   <section>
     <h4>⥣</h4>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 private static final Queue&lt;Object&gt; EMPTY = new Queue&lt;Object&gt;();
 
 @SuppressWarnings("unchecked")
 public static &lt;E&gt; Queue&lt;E&gt; empty() {
   return (Queue&lt;E&gt;) EMPTY;
 }
-      </code>
-    </pre>
+    </code></pre>
   </section>
 </section>
 
@@ -450,8 +483,7 @@ public static &lt;E&gt; Queue&lt;E&gt; empty() {
 <section>
   <section>
     <h2>Testbed</h2>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 public class CASQueue&lt;E&gt; {
   private final AtomicReference&lt;Queue&lt;E&gt;&gt; q;
   private final Semaphore nonEmpty = new Semaphore(0);
@@ -464,14 +496,12 @@ public class CASQueue&lt;E&gt; {
   public void enqueue(E element);
   public E dequeue();
 }
-      </code>
-    </pre>
+    </code></pre>
     <h4>⥥</h4>
   </section>
   <section>
     <h4>⥣</h4>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 public class LockQueue&lt;E&gt; {
   private Queue&lt;E&gt; q;
   private final Lock lock = new ReentrantLock();
@@ -485,14 +515,13 @@ public class LockQueue&lt;E&gt; {
   public void enqueue(E element);
   public E dequeue();
 }
-      </code>
-    </pre>
+    </code></pre>
   </section>
 </section>
 
 <section>
   <h2>Measurements</h2>
-  <img src="naive-measurements.png">
+  <img src="naive-queue/measurements.png">
 </section>
 
 <section class="bzzzt" data-transition="zoom">
@@ -510,10 +539,48 @@ public class LockQueue&lt;E&gt; {
 </section>
 
 <section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; empty = Queue.empty();
+    </code></pre>
+    <p><img class="diagram" src="recursive-queue/empty.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; a = empty.enqueue(1);
+    </code></pre>
+    <p><img class="diagram" src="recursive-queue/a.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; b = a.enqueue(2).enqueue(3);
+    </code></pre>
+    <p><img class="diagram" src="recursive-queue/b.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; c = b.enqueue(4);
+    </code></pre>
+    <p><img class="diagram" src="recursive-queue/c.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; d = c.enqueue(5)./* ... */.enqueue(10);
+    </code></pre>
+    <p><img class="diagram" src="recursive-queue/d.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; e = c.dequeue();
+    </code></pre>
+    <p><img class="diagram" src="recursive-queue/e.png"></p>
+  </section>
+</section>
+
+<section>
   <section>
     <h2>Queue reimplementation</h2>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 public class Queue&lt;E&gt; {
   private final Stack&lt;E&gt; in;
   private final Queue&lt;Stack&lt;E&gt;&gt; spine;
@@ -525,8 +592,7 @@ public class Queue&lt;E&gt; {
     spine = (Queue&lt;Stack&lt;E&gt;&gt;) this;
     out = Stack.empty();
   }
-      </code>
-    </pre>
+    </code></pre>
     <h4>⥥</h4>
   </section>
   <section>
@@ -547,7 +613,7 @@ private Queue(Stack&lt;E&gt; in, Queue&lt;Stack&lt;E&gt;&gt; spine, Stack&lt;E&g
       this.out = spine.front();
     }
   } else {
-    if (in.size() == 8) {
+    if (in.size() == 3) {
       // case 3: enqueue spine
       this.in = Stack.empty();
       this.spine = spine.enqueue(in.reverse());
@@ -560,14 +626,12 @@ private Queue(Stack&lt;E&gt; in, Queue&lt;Stack&lt;E&gt;&gt; spine, Stack&lt;E&g
     }
   }
 }
-      </code>
-    </pre>
+    </code></pre>
     <h4>⥥</h4>
   </section>
   <section>
     <h4>⥣</h4>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 public Queue&lt;E&gt; enqueue(E element) {
   return new Queue&lt;E&gt;(in.push(element), spine, out);
 }
@@ -583,28 +647,25 @@ public E front() {
 public boolean isEmpty() {
   return out.size() == 0;
 }
-      </code>
-    </pre>
+    </code></pre>
     <h4>⥥</h4>
   </section>
   <section>
     <h4>⥣</h4>
-    <pre>
-      <code class="java" data-trim>
+    <pre><code class="java" data-trim>
 private static final Queue&lt;Object&gt; EMPTY = new Queue&lt;Object&gt;();
 
 @SuppressWarnings("unchecked")
 public static &lt;E&gt; Queue&lt;E&gt; empty() {
   return (Queue&lt;E&gt;) EMPTY;
 }
-      </code>
-    </pre>
+    </code></pre>
   </section>
 </section>
 
 <section>
   <h2>Measurements</h2>
-  <img src="recursive-measurements.png">
+  <img src="recursive-queue/measurements.png">
 </section>
 
 <section data-transition="zoom">
