@@ -408,7 +408,7 @@ Queue&lt;Integer&gt; d = c.dequeue().enqueue(5);
   <pre><code class="java" data-trim>
 public Stack&lt;E&gt; reverse() {
   Stack&lt;E&gt; in = this, out = empty();
-  while (in.size != 0) {
+  while (!in.isEmpty()) {
     out = out.push(in.head);
     in = in.tail;
   }
@@ -578,6 +578,15 @@ Queue&lt;Integer&gt; e = c.dequeue();
 </section>
 
 <section>
+  <h2>Prerequisite</h2>
+  <pre><code class="java" data-trim>
+public int size() {
+  return isEmpty() ? 0 : tail.size() + 1;
+}
+  </code></pre>
+</section>
+
+<section>
   <section>
     <h2>Queue reimplementation</h2>
     <pre><code class="java" data-trim>
@@ -645,7 +654,7 @@ public E front() {
 }
 
 public boolean isEmpty() {
-  return out.size() == 0;
+  return out.isEmpty();
 }
     </code></pre>
     <h4>⥥</h4>
