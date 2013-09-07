@@ -347,7 +347,16 @@ public static &lt;E&gt; Stack&lt;E&gt; empty() {
 </section>
 
 <section>
-  <h2>Okay...</h2>
+  <h2>"Persistent" data structures</h2>
+  <ul>
+    <li>Common substructure can be shared between copies</li>
+    <li>Somewhat similar to copy-on-write, but easier and more efficient</li>
+  </ul>
+</section>
+
+<section>
+  <img src="whatever.gif" style="min-height: 70%">
+  <h2>Whatever</h2>
 </section>
 
 <section>
@@ -365,9 +374,57 @@ public class Queue&lt;E&gt; {
 </section>
 
 <section>
-  <h1>TODO: pretty pictures</h1>
-  <p>discuss invariant: out is empty only if queue is empty</p>
-  <p>discuss amortized analysis</p>
+  <h2>Double the fun?</h2>
+  <ul>
+    <li class="fragment">Stack: a singly-linked list, with a reference to the top</li>
+    <li class="fragment">Queue: a doubly-linked list, with references to the back and front?</li>
+  </ul>
+</section>
+
+<section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; a = /* ... */;
+    </code></pre>
+    <p><img class="diagram" src="doubly-linked-queue/a.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; b = a.dequeue();
+    </code></pre>
+    <p><img class="diagram" src="doubly-linked-queue/ab1.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; b = a.dequeue();
+    </code></pre>
+    <p><img class="diagram" src="doubly-linked-queue/ab2.png"></p>
+  </section>
+  <section data-transition="none">
+    <pre><code class="java" data-trim>
+Queue&lt;Integer&gt; b = a.dequeue();
+    </code></pre>
+    <p><img class="diagram" src="doubly-linked-queue/ab3.png"></p>
+  </section>
+</section>
+
+<section>
+  <div style="display: inline-block;">
+    <h2>Not quite</h2>
+    <ul style="display: block;">
+      <li class="fragment">All enqueue/dequeue operations require complete copies</li>
+      <li class="fragment">Persistent—previous copies are preserved—but not efficient</li>
+    </ul>
+    <div class="fragment">
+      <hr>
+      <h2>But close</h2>
+    </div>
+    <ul style="display: block;">
+      <li class="fragment">Two stacks: incoming and outgoing</li>
+      <li class="fragment">Push to incoming stack, pop from outgoing stack</li>
+      <li class="fragment">Invariant: outgoing stack must be non-empty if queue is non-empty</li>
+    </ul>
+  </div>
 </section>
 
 <section>
@@ -477,7 +534,32 @@ public static &lt;E&gt; Queue&lt;E&gt; empty() {
 </section>
 
 <section>
+  <div style="display: inline-block;">
+    <h2>Analysis</h2>
+    <ul style="display: block;">
+      <li class="fragment">Enqueue: always O(1)</li>
+      <li class="fragment">Dequeue: sometimes O(1), sometimes O(n)</li>
+    </ul>
+    <div class="fragment">
+      <hr>
+      <h2>Amortized analysis</h2>
+    </div>
+    <ul style="display: block;">
+      <li class="fragment">Assume each enqueued element will eventually be rotated</li>
+      <li class="fragment">Pay the cost of rotation for each element when enqueuing</li>
+      <li class="fragment">Enqueue: O(1), with 1 credit</li>
+      <li class="fragment">Dequeue: amortized O(1), debiting when needed to rotate</li>
+    </ul>
+  </div>
+</section>
+
+<section>
   <h1>Microbenchmarking!</h1>
+</section>
+
+<section>
+  <h2>Real-time message queue</h2>
+  <p>Adapt for concurrent reads and writes</p>
 </section>
 
 <section>
@@ -529,13 +611,16 @@ public class LockQueue&lt;E&gt; {
 </section>
 
 <section>
-  <h2>Back to the drawing board...</h2>
+  <h2>Theory != Practice</h2>
+  <ul>
+    <li class="fragment">Amortized analysis is unsuitable for real-time applications</li>
+    <li class="fragment">Need better worst-case performance</li>
+    <li class="fragment">Divide and conquer: break rotate into chunks, recursively</li>
+  </ul>
 </section>
 
 <section>
-  <h1>TODO: pretty pictures</h1>
-  <p>discuss "spine" and recursive slowdown</p>
-  <p>discuss new invariant: stacks can't be longer than some fixed length</p>
+  <h1>TODO: fix bug in diagrams</h1>
 </section>
 
 <section>
@@ -575,6 +660,11 @@ Queue&lt;Integer&gt; e = c.dequeue();
     </code></pre>
     <p><img class="diagram" src="recursive-queue/e.png"></p>
   </section>
+</section>
+
+<section>
+  <img src="mind-blown.gif" style="min-height: 70%">
+  <h2>Mind = Blown</h2>
 </section>
 
 <section>
