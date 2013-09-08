@@ -351,6 +351,7 @@ public static &lt;E&gt; Stack&lt;E&gt; empty() {
   <ul>
     <li>Common substructure can be shared between copies</li>
     <li>Somewhat similar to copy-on-write, but easier and more efficient</li>
+    <li>Also note: stable identity! We could even memoize hashCode...</li>
   </ul>
 </section>
 
@@ -615,12 +616,8 @@ public class LockQueue&lt;E&gt; {
   <ul>
     <li class="fragment">Amortized analysis is unsuitable for real-time applications</li>
     <li class="fragment">Need better worst-case performance</li>
-    <li class="fragment">Divide and conquer: break rotate into chunks, recursively</li>
+    <li class="fragment">Same approach, new invariant: stacks can be at most 3 elements long</li>
   </ul>
-</section>
-
-<section>
-  <h1>TODO: fix bug in diagrams</h1>
 </section>
 
 <section>
@@ -773,11 +770,39 @@ public static &lt;E&gt; Queue&lt;E&gt; empty() {
 </section>
 
 <section>
+  <h1><b>How</b> did we get here?</h1>
+</section>
+
+<section>
+  <h2>Problem 1: Unstable identity</h2>
+  <p>Solved, trivially.</p>
+</section>
+
+<section>
+  <h2>Problem 2: Behavioral subtyping</h2>
+  <p>Not solved, but making state change visible (by returning copies) helps.</p>
+</section>
+
+<section>
+  <h2>Problem 3: Defensive copying</h2>
+  <p>Solved efficiently with persistent data structures.</p>
+</section>
+
+<section>
   <h2>Point being</h2>
-  <p>not suggesting using persistent queues for real-time messaging (use disruptor!)</p>
-  <p>instead, suggesting that performance is good while offering persistence (sharing of substructure)</p>
-  <p>mention vector tries, hash array mapped tries</p>
-  <p>would be nice if java had these built in</p>
+  <ul>
+    <li class="fragment"><b>Not</b> recommending persistent queues for messaging (use Disruptor!)</li>
+    <li class="fragment">But performance is <b>very good</b> for general use</li>
+    <li class="fragment">Very efficient, persistent implementations exist for:
+      <ul>
+        <li>Random-access vectors (bit-mapped vector tries)</li>
+        <li>Unordered sets and maps (hash array mapped tries)</li>
+        <li>Ordered sets and maps (persistent red-black trees)</li>
+        <li>etc.</li>
+      </ul>
+    </li>
+    <li class="fragment">I'd like to see these in the Java standard library</li>
+  </ul>
 </section>
 
 <section>
